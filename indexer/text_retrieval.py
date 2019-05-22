@@ -46,10 +46,23 @@ stop_words_slovene = set(stopwords.words("slovenian")).union(
      "preko", "znova", "morda", "kateri", "katero", "katera", "ampak", "lahek", "lahka", "lahko", "morati", "torej"})
 
 
+def process_text(text):
+    tokens = []
+    split_text = text.split()
+    for i in range(len(split_text)):
+        cur = re.findall('([a-zA-ZšžčćŠŽĆČ]+)', split_text[i])
+        if cur:
+            for item in cur:
+                item = item.lower()
+                if item not in stop_words_slovene:
+                    tokens.append((item, str(i)))
+    return tokens
+
+
 def prepare_tokens(input, html=True):
     # manjka lematizacija, če se sploh da v slovenščini
     if html:
-        soup = bs4.BeautifulSoup(open(input, encoding="utf-8"), "html.parser", from_encoding="utf-8")
+        soup = bs4.BeautifulSoup(open(input, encoding="utf-8"), "html.parser")
         # soup = bs4.BeautifulSoup(
         #     open("PA3-data/e-prostor.gov.si/e-prostor.gov.si.1.html"), "html.parser")
         for script in soup(["script", "style"]):
@@ -60,19 +73,20 @@ def prepare_tokens(input, html=True):
         text = input
     # tokenizer = RegexpTokenizer('\w+')
     # tokens = tokenizer.tokenize(text)
-    tokens = []
-    split_text = text.split()
-    # ' '.join(split_text[18-3:18+3])
-
-    # split_text
-    # VERI GUD PROPRIETERI TOKENIZAR (Y) <---
-    for i in range(len(split_text)):
-        cur = re.findall('([a-zA-ZšžčćŠŽĆČ]+)', split_text[i])
-        if cur != []:
-            for item in cur:
-                item = item.lower()
-                if item not in stop_words_slovene:
-                    tokens.append((item, str(i)))
-    # tokens = [(i.lower(), i for i in text.split()]
-    # tokens=[s.lower() for s in tokens if s not in stop_words_slovene]
+    # tokens = []
+    # split_text = text.split()
+    # # ' '.join(split_text[18-3:18+3])
+    #
+    # # split_text
+    # # VERI GUD PROPRIETERI TOKENIZAR (Y) <---
+    # for i in range(len(split_text)):
+    #     cur = re.findall('([a-zA-ZšžčćŠŽĆČ]+)', split_text[i])
+    #     if cur != []:
+    #         for item in cur:
+    #             item = item.lower()
+    #             if item not in stop_words_slovene:
+    #                 tokens.append((item, str(i)))
+    # # tokens = [(i.lower(), i for i in text.split()]
+    # # tokens=[s.lower() for s in tokens if s not in stop_words_slovene]
+    tokens = process_text(text)
     return tokens

@@ -41,6 +41,7 @@ def create_index(data_path):
                 print(os.path.join(full_path, file))
                 tokens = prepare_tokens(os.path.join(full_path, file))
                 insert_into_db(tokens, os.path.basename(file), connection)
+    connection.close()
 
 
 if __name__ == "__main__":
