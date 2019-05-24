@@ -1,8 +1,10 @@
 import re
+import os
 import sqlite3
 import logging
 import indexer.config as conf
 from indexer import text_retrieval
+from indexer.text_retrieval import prepare_tokens
 
 
 def get_snippet(index, num_of_words, document_path):
@@ -55,7 +57,8 @@ def print_results(results, query_string):
             document_name += " " * (document_name_len - len(document_name))
             print(frequency_string, document_name, " " + snippet_string)
         else:
-            logging.error("Could not get document's folder name - bad document name {}".format(document_name))
+            logging.error(
+                "Could not get document's folder name - bad document name {}".format(document_name))
 
 
 def get_query_results(query_string):
@@ -83,5 +86,28 @@ def get_query_results(query_string):
     print_results(results, query_string)
 
 
+def get_query_results_sequential(query_string, data_path=conf.data_path):
+    query_tokens = [token for token, idx in text_retrieval.prepare_tokens(query_string, html=False)]
+    results_dict = {}
+    for folder in os.listdir(data_path):
+        full_path = os.path.join(data_path, folder)
+        if os.path.isdir(full_path):
+            for file in os.listdir(full_path):
+                # process file
+                print(os.path.join(full_path, file))
+                tokens = prepare_tokens(os.path.join(full_path, file))
+                freq = 0
+                idxs = []
+                for word in tokens:
+                    if word[0] in query_tokens:
+                        freq += 1
+                        idxs.append(word[1])
+                if freq != 0:
+                    results_dict[file] = [freq, idxs, file]
+    results = sorted(results_dict.values(), key=lambda x: x[0])
+    print_results(results, query_string)
+
+
 if __name__ == "__main__":
-    get_query_results("sklenejo načina poročati")
+    get_query_results_sequential("sklenejo načina poročati")
+    # get_query_results("sklenejo načina poročati")
