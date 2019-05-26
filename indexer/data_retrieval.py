@@ -1,8 +1,8 @@
 import re
 import os
+import sys
 import sqlite3
 import logging
-import time
 import indexer.config as conf
 from indexer import text_retrieval
 from indexer.text_retrieval import prepare_tokens
@@ -110,8 +110,12 @@ def get_query_results_sequential(query_string, num_of_results, data_path=conf.da
 
 
 if __name__ == "__main__":
-    start_time = time.time()
     results_num = conf.results_number
-    # get_query_results_sequential("predelovalne dejavnosti", results_num)
-    get_query_results("predelovalne dejavnosti", results_num)
-    print("Execution time: ", time.time()-start_time)
+    if len(sys.argv) < 2:
+        print("No query specified. Could not execute query search.")
+        exit(1)
+    query = sys.argv[1]
+    if len(sys.argv) == 3 and sys.argv[2] == "sequential":
+        get_query_results_sequential(query, results_num)
+    else:
+        get_query_results(query, results_num)

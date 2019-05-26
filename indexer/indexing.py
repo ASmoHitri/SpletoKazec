@@ -5,8 +5,6 @@ from indexer.text_retrieval import prepare_tokens
 import indexer.config as conf
 
 
-# posting_insert_query = """INSERT INTO Posting(word, documentName, frequency, indexes) VALUES (?, ?, ?, ?)
-#                          ON CONFLICT (word, documentName) DO UPDATE SET frequency=frequency+1, indexes=indexes || ',' || ?"""
 posting_update_query = "UPDATE Posting SET frequency=frequency+1, indexes=indexes || ',' || ? WHERE word=? AND documentName=?"
 posting_insert_query = "INSERT INTO Posting(word, documentName, frequency, indexes) VALUES (?, ?, ?, ?)"
 index_insert_query = "INSERT OR IGNORE INTO IndexWord(word) VALUES (?)"

@@ -1,11 +1,9 @@
 import bs4
 import nltk
 import re
-# from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import stopwords
 
 nltk.download('stopwords')
-# v dir /Users/<User>/nltk_data/corpora/stopwords dodaj datoteko slovenian iz folderja data
 stop_words_slovene = set(stopwords.words("slovenian")).union(
     {"ter", "nov", "novo", "nova", "zato", "še", "zaradi", "a", "ali", "april", "avgust", "b", "bi", "bil", "bila",
      "bile", "bili", "bilo", "biti", "blizu", "bo", "bodo", "bojo", "bolj", "bom", "bomo", "boste", "bova", "boš", "brez",
@@ -48,8 +46,6 @@ stop_words_slovene = set(stopwords.words("slovenian")).union(
 
 def get_text(input_file):
     soup = bs4.BeautifulSoup(open(input_file, encoding="utf-8"), "html.parser")
-    # soup = bs4.BeautifulSoup(
-    #     open("PA3-data/e-prostor.gov.si/e-prostor.gov.si.1.html"), "html.parser")
     for script in soup(["script", "style"]):
         script.decompose()
     soup = soup.find('body')
@@ -58,26 +54,8 @@ def get_text(input_file):
 
 
 def prepare_tokens(text, html=True):
-    # manjka lematizacija, če se sploh da v slovenščini
     if html:
         text = get_text(text)
-    # tokenizer = RegexpTokenizer('\w+')
-    # tokens = tokenizer.tokenize(text)
-    # tokens = []
-    # split_text = text.split()
-    # # ' '.join(split_text[18-3:18+3])
-    #
-    # # split_text
-    # # VERI GUD PROPRIETERI TOKENIZAR (Y) <---
-    # for i in range(len(split_text)):
-    #     cur = re.findall('([a-zA-ZšžčćŠŽĆČ]+)', split_text[i])
-    #     if cur != []:
-    #         for item in cur:
-    #             item = item.lower()
-    #             if item not in stop_words_slovene:
-    #                 tokens.append((item, str(i)))
-    # # tokens = [(i.lower(), i for i in text.split()]
-    # # tokens=[s.lower() for s in tokens if s not in stop_words_slovene]
     tokens = []
     split_text = text.split()
     for i in range(len(split_text)):
