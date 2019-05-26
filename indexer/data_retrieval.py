@@ -38,6 +38,8 @@ def print_results(results, query_string):
             num_of_indexes = len(indexes)
             last_position = indexes[0] - 1
             snippet_string = ""
+            if indexes[0] < 4:
+                snippet_string += "..."
             num_of_snippets = 0
             for i in range(num_of_indexes):
                 num_of_words = 7  # number of words per snippet
@@ -94,17 +96,17 @@ def get_query_results_sequential(query_string, data_path=conf.data_path):
         if os.path.isdir(full_path):
             for file in os.listdir(full_path):
                 # process file
-                print(os.path.join(full_path, file))
+                # print(os.path.join(full_path, file))
                 tokens = prepare_tokens(os.path.join(full_path, file))
                 freq = 0
                 idxs = []
                 for word in tokens:
                     if word[0] in query_tokens:
                         freq += 1
-                        idxs.append(word[1])
+                        idxs.append(int(word[1]))
                 if freq != 0:
                     results_dict[file] = [freq, idxs, file]
-    results = sorted(results_dict.values(), key=lambda x: x[0])
+    results = sorted(results_dict.values(), key=lambda x: x[0], reverse=True)
     print_results(results, query_string)
 
 
